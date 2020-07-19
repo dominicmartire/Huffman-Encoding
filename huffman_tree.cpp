@@ -1,10 +1,14 @@
 #include "huffman_tree.h"
 #include <iostream>
-TreeNode::TreeNode(uint32_t weight, TreeNode* left, TreeNode* right):
-    weight(weight), left(left), right(right){}
 
-void TreeNode::insert(TreeNode* node){
-    TreeNode* current  = this;
+TreeNode::TreeNode(char value, uint32_t weight, std::shared_ptr<TreeNode> left, std::shared_ptr<TreeNode> right):
+    value(value), weight(weight), left(left), right(right){}
+
+TreeNode::~TreeNode(){
+}
+
+void TreeNode::insert(std::shared_ptr<TreeNode> node){
+    std::shared_ptr<TreeNode> current  = this->getPtr();
     while(current->left != nullptr && current->right != nullptr){
         if(*current < *node){
             current = current->right;
@@ -23,6 +27,9 @@ bool TreeNode::operator<(const TreeNode& node){
     return weight < node.weight;
 }
 
+bool TreeNode::operator>(const TreeNode& node){
+    return weight > node.weight;
+}
 
-TreeLeaf::TreeLeaf(char val, uint32_t weight):value(val), TreeNode(weight){}
+
     

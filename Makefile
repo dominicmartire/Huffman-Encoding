@@ -1,16 +1,16 @@
-CC=cc
+CC=g++
+FLAGS=-g
 
-objects=huffman.o huffman_tree.o
 
+objects=huffman.o huffman_tree.o process_text.o
+
+sources=huffman.cpp huffman_tree.cpp process_text.cpp
 
 huffman: $(objects)
-	$(CC) -o huffman $(objects)
+	$(CC) -o huffman $(objects) $(FLAGS)
 
-huffman.o: huffman.cpp
-	$(CC) -c huffman.cpp -g 
-
-huffman_tree.o: huffman_tree.cpp
-	$(CC) -c huffman_tree.cpp -g
+$(objects): $(sources)
+	$(CC) -c $(sources)  $(FLAGS)
 
 clean:
 	rm $(objects)

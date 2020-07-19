@@ -1,22 +1,18 @@
 #include <iostream>
+#include <queue>
+#include <vector>
+#include <fstream>
 #include "huffman_tree.h"
+#include "process_text.h"
+
 
 int main(int argc, char* argv[]){
-    TreeNode insert(7);
-    TreeNode tree(5);
-    TreeNode insert2(3);
-    tree.insert(&insert);
-    tree.insert(&insert2);
-
-    TreeNode insert3(8);
-    tree.insert(&insert3);
-
-    std::cout << (tree.left)->weight << std::endl;
-    std::cout<< (tree.right)->weight << std::endl;
-    std::cout << (insert.right)->weight << " " << (tree.right)->right->weight << std::endl;
-
-    TreeLeaf leaf('c', 3);
-    std::cout << leaf.value << " " << leaf.weight << std::endl;
-    insert3.insert(&leaf);
-    std::cout << (insert3.left)->weight << std::endl;
-}
+    std::map<char, uint32_t> m;
+    text_to_map(argv[1], m);
+    std::vector<NodePtr> pointers;
+    map_to_leaves(m, pointers); 
+   
+    NodePtr root = std::make_shared<TreeNode>();
+    construct_tree(pointers, root);
+    return 0;
+} 

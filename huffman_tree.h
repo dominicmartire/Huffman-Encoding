@@ -1,18 +1,22 @@
 #pragma once
 #include <cstdint>
+#include <memory>
 
-struct TreeNode{
-    TreeNode(uint32_t weight, TreeNode* left=nullptr, TreeNode* right=nullptr);
-    void insert(TreeNode*);
+struct TreeNode: public std::enable_shared_from_this<TreeNode>{
+    TreeNode(char value = '\0', uint32_t weight=0, std::shared_ptr<TreeNode> left=nullptr, std::shared_ptr<TreeNode> right=nullptr);
+    ~TreeNode();
+    void insert(std::shared_ptr<TreeNode>);
     bool operator<(const TreeNode&);
-    
-    uint32_t weight;
-    TreeNode* left;
-    TreeNode* right;
-};
+    bool operator>(const TreeNode&);
 
-struct TreeLeaf: public TreeNode{
-    TreeLeaf(char, uint32_t);
+    std::shared_ptr<TreeNode> getPtr(){
+        return shared_from_this();
+    }
 
     char value;
+    uint32_t weight;
+    std::shared_ptr<TreeNode> left;
+    std::shared_ptr<TreeNode> right;
 };
+
+
