@@ -32,4 +32,42 @@ bool TreeNode::operator>(const TreeNode& node){
 }
 
 
-    
+void TreeNode::vectorize(){
+    std::shared_ptr<TreeNode> current = this->getPtr();
+    std::queue<std::shared_ptr<TreeNode>> node_queue;
+    node_queue.push(current);
+    while(!node_queue.empty()){
+        current = node_queue.front();
+        serial.push_back(current->value);
+        node_queue.pop();
+        if(current->left == nullptr){
+            serial.push_back('\0');
+        }
+        else{
+            node_queue.push(current->left);
+        }
+        if(current->right == nullptr){
+            serial.push_back('\0');
+        }
+        else{
+            node_queue.push(current->right);
+        }
+    }
+}
+
+std::ostream& operator<<(std::ostream& out, const TreeNode& root){
+    for(char c: root.serial){
+        out.put(c);
+    }
+    return out;
+}
+
+
+
+
+
+
+
+
+
+

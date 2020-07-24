@@ -14,5 +14,10 @@ int main(int argc, char* argv[]){
    
     NodePtr root = std::make_shared<TreeNode>();
     construct_tree(pointers, root);
+   
+    std::map<char, std::string> encodings;
+    char_encodings(root, encodings);
+    encode_to_file(encodings, argv[1], "out.txt", root);  
+    decode_from_file("out.txt");
     return 0;
 } 
