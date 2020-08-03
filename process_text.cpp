@@ -71,6 +71,7 @@ void encode_to_file(const std::map<char,std::string>& encodings, const char* in_
     
     std::ifstream file(in_file, std::ifstream::in);
     std::ofstream out(out_file, std::ofstream::binary);
+    std::vector<char> chars_to_write;
     char to_write, c;
 
     std::string remaining = "";
@@ -86,15 +87,7 @@ void encode_to_file(const std::map<char,std::string>& encodings, const char* in_
 
     out << *write_tree;
 
-
-    char max_path_len = 0;
-    for(auto& p: encodings){
-        if(p.second.size() > max_path_len){
-            max_path_len = p.second.size();
-        }
-    }
-
-    out.put(max_path_len + 1); // get maximum depth of tree in order to deal with last byte written to file
+   std::cout << "size of tree written to file " << (int)root->serial.size() << std::endl; 
 
     while(!file.eof()){
        to_write = 0;
@@ -104,53 +97,91 @@ void encode_to_file(const std::map<char,std::string>& encodings, const char* in_
        if(remaining.size() > 8){ // see if 8 1s or 0s have been appended to remaining
            to_write = 0;
            for(int i = 0; i < 8; i++){
+               to_write <<= 1;
                to_write |= (remaining[i] - '0');
 
-               to_write <<= 1;
            }
            
-           out.put(to_write);
+           chars_to_write.push_back(c);
            remaining = remaining.substr(8, remaining.size() - 8);
        }
     }
-    //handle last character if remaining is less than 8 bits
-    /* 
-    might cause an issue if remaining isn't 8 characters long
-    for example the last character is mapped to 1100
-    the last byte written to the file will be 00001100
-    and that path might not exist in the tree, or it will
-    lead to an incorrect character
-    */
-    to_write = 0;
-    for(int i = 0; i < max_path_len + 1; i++){ //pad with max_path_len + 1 null bytes in order to know when to stop reading
-        out.put(to_write);
+
+    out << (int)chars_to_write.size();
+    for(char& c: chars_to_write){
+        out << c;
     }
+    std::cout << "size of encoded text " << (int)chars_to_write.size() << std::endl;
+    /*deal with last remaining path in tree*/
+    out << (char)remaining.size();
+    int last_path = 0;
 
-    char size_of_last = 0;
-    if(remaining.size() > 0){
-        for(int i = 0; i < remaining.size(); i++){
-            to_write |= (remaining[i] - '0');
-            to_write <<= 1;
-
-            size_of_last++;
-        }
+    for(int i = 0; i < 8; i++){
+        last_path |= (remaining[i] - '0');
+        last_path <<= 1;
     }
-    out.put(size_of_last); // will be between 0 and 8. when decoding, if this byte equals 4 and the following byte is 00000101 then the last path read will be 0101
-    out.put(to_write);
+    out << last_path;
 
+    out.close();
+    file.close();
 }
 
 
 void decode_from_file(const char* file_name){
     std::ifstream file(file_name, std::ifstream::in);
     char c;
-    int size = 0;
-    file >> size;
-    char* tree = new char[size];
-    file.read(tree, size);
-    std::cout << tree << std::endl;
+    int tree_size = 0;
+    file >> tree_size;
+    std::cout << "size of tree read from file " << tree_size << '\n';
+    char* tree = new char[tree_size];
+    file.read(tree, tree_size); // reads the vectorized huffman tree from file
 
-    delete tree;
+    char data_size_string[sizeof(int)];
+    int data_size;
+    file >> data_size;
+    std::cout << "size of data read from file " << data_size << '\n'; 
+
+    char* data = new char[data_size];
+    file.read(data, data_size);
+
+    int last_char_size = 0;
+    file >> last_char_size;
+    
+    char byte; //byte read from data
+    char tree_value = '\0'; //char at the current branch in the tree;
+
+    int data_loc = 0; //index of where we are in data read from file
+    int tree_loc = 0; //index of where we are in tree
+
+    char bit_shift = 0; //used to shift byte currently read
+    char bit; //bit read from byte
+
+    while(data_loc < data_size){
+        byte = data[data_loc];
+        while(tree_value == '\0'){
+            bit = (byte << bit_shift) & 0x80; //get first bit of char
+            if(bit == 0){
+                tree_loc = (2 * tree_loc) + 1;
+            }
+            else{
+                tree_loc = (2 * tree_loc) + 2;
+            }
+            tree_value = tree[tree_loc]; //get value at root after moving down tree
+            bit_shift++; //increment the shift
+
+            if(bit_shift > 7){
+                bit_shift = 0;
+                data_loc++;
+                byte = data[data_loc];
+            }
+        }
+        tree_value = '\0';
+        tree_loc = 0;
+    }
+
+    file.close();
+    delete[] data;
+    delete[] tree;
 }
 
 

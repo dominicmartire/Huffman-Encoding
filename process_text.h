@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <typeinfo>
 #include "huffman_tree.h"
 
 using NodePtr = std::shared_ptr<TreeNode>;

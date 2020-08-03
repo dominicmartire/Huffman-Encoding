@@ -6,8 +6,9 @@ objects=huffman.o huffman_tree.o process_text.o
 
 sources=huffman.cpp huffman_tree.cpp process_text.cpp
 
+all: huffman
 huffman: $(objects)
-	$(CC) -o huffman $(objects) $(FLAGS)
+	$(CC) $(objects) $(FLAGS) -o $@
 
 $(objects): $(sources)
 	$(CC) -c $(sources)  $(FLAGS)
