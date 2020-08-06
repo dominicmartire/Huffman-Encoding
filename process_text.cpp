@@ -144,6 +144,7 @@ void decode_from_file(const char* file_name){
     char* data = new char[data_size];
     file.read(data, data_size);
 
+    /**/
     int last_char_size = 0;
     file >> last_char_size;
     

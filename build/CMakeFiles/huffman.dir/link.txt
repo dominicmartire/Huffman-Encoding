@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/huffman.dir/huffman.cpp.o CMakeFiles/huffman.dir/huffman_tree.cpp.o CMakeFiles/huffman.dir/process_text.cpp.o  -o huffman 

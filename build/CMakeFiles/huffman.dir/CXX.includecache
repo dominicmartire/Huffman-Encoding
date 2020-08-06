@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/dpm/dev/huffman/huffman_tree.h
+cstdint
+-
+memory
+-
+vector
+-
+queue
+-
+iostream
+-
+
+/home/dpm/dev/huffman/process_text.cpp
+process_text.h
+/home/dpm/dev/huffman/process_text.h
+
+/home/dpm/dev/huffman/process_text.h
+queue
+-
+map
+-
+memory
+-
+iostream
+-
+fstream
+-
+vector
+-
+string
+-
+typeinfo
+-
+huffman_tree.h
+/home/dpm/dev/huffman/huffman_tree.h
+
